@@ -1,0 +1,189 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = env("DB_PROVIDER")
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("cliente")
+  avatarUrl    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  clientProfile    ClientProfile?
+  ratings          Rating[]
+  sessions         RecommendationSession[]
+  passportStamps   PassportStamp[]
+  userBadges       UserBadge[]
+  traceRecords     TraceabilityRecord[]
+}
+
+model ClientProfile {
+  id             String @id @default(cuid())
+  userId         String @unique
+  prefAcidez     Int?
+  prefCuerpo     Int?
+  prefDulzor     Int?
+  prefAmargor    Int?
+  prefIntensidad Int?
+  totalVisits    Int    @default(0)
+  passportLevel  Int    @default(1)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Coffee {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  origin      String
+  variety     String
+  process     String
+  roastLevel  String
+  price       Float
+  imageUrl    String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  sensoryProfile SensoryProfile?
+  qrCode         QRCode?
+  traceRecords   TraceabilityRecord[]
+  ratings        Rating[]
+  sessions       RecommendationSession[]
+  passportStamps PassportStamp[]
+}
+
+model SensoryProfile {
+  id            String   @id @default(cuid())
+  coffeeId      String   @unique
+  acidez        Float
+  cuerpo        Float
+  dulzor        Float
+  amargor       Float
+  aroma         Float
+  saborResidual Float
+  balance       Float
+  uniformidad   Float
+  flavorNotes   String
+  cupperScore   Float?
+
+  coffee Coffee @relation(fields: [coffeeId], references: [id], onDelete: Cascade)
+}
+
+model QRCode {
+  id        String   @id @default(cuid())
+  coffeeId  String   @unique
+  qrToken   String   @unique
+  qrUrl     String
+  qrImage   String?
+  scanCount Int      @default(0)
+  createdAt DateTime @default(now())
+
+  coffee Coffee @relation(fields: [coffeeId], references: [id])
+}
+
+model TraceabilityRecord {
+  id            String   @id @default(cuid())
+  coffeeId      String
+  stage         String
+  stageOrder    Int
+  recordedById  String?
+  harvestDate   String?
+  harvestMethod String?
+  cherryWeightKg Float?
+  processStart  String?
+  processEnd    String?
+  humidityPct   Float?
+  roastDate     String?
+  roastDurationMin Int?
+  roastTempC    Float?
+  brewMethod    String?
+  grindSize     String?
+  waterTempC    Float?
+  doseGrams     Float?
+  notes         String?
+  latitude      Float?
+  longitude     Float?
+  createdAt     DateTime @default(now())
+
+  coffee     Coffee @relation(fields: [coffeeId], references: [id])
+  recordedBy User?  @relation(fields: [recordedById], references: [id])
+}
+
+model RecommendationSession {
+  id             String   @id @default(cuid())
+  userId         String?
+  q1FlavorTags   String
+  q2Intensity    Int
+  q3Mood         String
+  recommendedIds String
+  matchScores    String
+  selectedId     String?
+  createdAt      DateTime @default(now())
+
+  user     User?   @relation(fields: [userId], references: [id])
+  selected Coffee? @relation(fields: [selectedId], references: [id])
+}
+
+model Rating {
+  id            String   @id @default(cuid())
+  userId        String
+  coffeeId      String
+  rAcidez       Int
+  rCuerpo       Int
+  rDulzor       Int
+  rAmargor      Int
+  rAroma        Int
+  rSaborResidual Int
+  rBalance      Int
+  rUniformidad  Int
+  overallScore  Int
+  comment       String?
+  createdAt     DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  coffee Coffee @relation(fields: [coffeeId], references: [id])
+
+  @@unique([userId, coffeeId])
+}
+
+model PassportStamp {
+  id        String   @id @default(cuid())
+  userId    String
+  coffeeId  String
+  stampIcon String?
+  earnedAt  DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  coffee Coffee @relation(fields: [coffeeId], references: [id])
+
+  @@unique([userId, coffeeId])
+}
+
+model Badge {
+  id             Int    @id @default(autoincrement())
+  name           String
+  description    String?
+  iconUrl        String?
+  requiredStamps Int    @default(1)
+
+  userBadges UserBadge[]
+}
+
+model UserBadge {
+  userId   String
+  badgeId  Int
+  earnedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  badge Badge @relation(fields: [badgeId], references: [id])
+
+  @@id([userId, badgeId])
+}

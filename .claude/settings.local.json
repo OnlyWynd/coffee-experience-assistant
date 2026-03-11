@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls \"d:/Nueva carpeta \\(2\\)/\")",
+      "Bash(ls -la \"d:/Nueva carpeta \\(2\\)/\")",
+      "Bash(mkdir -p \"D:/Nueva carpeta \\(2\\)/backend/src/modules\" \"D:/Nueva carpeta \\(2\\)/backend/src/routes\" \"D:/Nueva carpeta \\(2\\)/backend/prisma\")",
+      "Bash(ls \"D:/Nueva carpeta \\(2\\)/backend/\")",
+      "Bash(find \"D:/Nueva carpeta \\(2\\)/backend\" -type f)",
+      "Bash(find \"D:/Nueva carpeta \\(2\\)/frontend\" -type f)",
+      "Bash(ls \"d:/Nueva carpeta \\(2\\)/backend/src/\")",
+      "Bash(ls \"d:/Nueva carpeta \\(2\\)/frontend/src/pages/\")",
+      "Bash(ls \"d:/Nueva carpeta \\(2\\)/frontend/src/components/\")",
+      "Bash(npm install:*)",
+      "Bash(cmd.exe /c \"node --version && npm --version\")",
+      "Bash(cmd.exe /c \"where node\")",
+      "Bash(cmd.exe /c \"node -v\")",
+      "Bash(powershell.exe -Command \"node -v; npm -v\")",
+      "Bash(cmd.exe /c \"git --version\")",
+      "Bash(powershell.exe -Command \"git --version\")"
+    ]
+  }
+}
